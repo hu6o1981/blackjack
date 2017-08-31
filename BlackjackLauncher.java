@@ -8,7 +8,11 @@ package com.gmail.hugoleemet;
  * @version 0.1
  */
 final class BlackjackLauncher {
+    
     public static void main(String[] args) {
+//        Card kaart1 = new Card(Suit.CLUB, Rank.THREE);
+//        System.out.println(kaart1);
         
+        DecksOfCards deckOfCards = new DecksOfCards(6);
     }
 }
