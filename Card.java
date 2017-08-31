@@ -24,7 +24,7 @@ final class Card {
     }
 
     /**
-     * Returns String representation of suit and rank of this card.
+     * Returns string representation of suit and rank of this card.
      */
     @Override
     public String toString() {

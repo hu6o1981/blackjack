@@ -1,9 +1,9 @@
 package com.gmail.hugoleemet;
 
 /**
- * Enum of ranks for cards four 
+ * Enum of ranks for cards. 
+ * 
  * @author Hugo
- *
  */
 enum Rank {
     TWO("2", "Two", 2),

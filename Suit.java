@@ -1,5 +1,11 @@
 package com.gmail.hugoleemet;
 
+/**
+ * Enum of suits for cards.
+ * 
+ * @author Hugo
+ *
+ */
 enum Suit {
     HEART("Heart"),
     DIAMOND("Diamond"),
