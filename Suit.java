@@ -1,7 +1,7 @@
 package com.gmail.hugoleemet;
 
 /**
- * Enum of suits for cards.
+ * This enum contains suits for cards.
  * 
  * @author Hugo
  *

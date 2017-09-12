@@ -1,7 +1,7 @@
 package com.gmail.hugoleemet;
 
 /**
- * Enum of ranks for cards. 
+ * This enum contains ranks for cards.
  * 
  * @author Hugo
  */

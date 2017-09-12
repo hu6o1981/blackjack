@@ -5,13 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Class containing all cards used in current game (cards in the deck, waiting to be dealt).
+ * The {@code Deck} class contains all cards used in current game (cards in the deck, waiting to be dealt).
  * Number of decks used can be specified in constructor (default 1).
  * 
  * @author Hugo
- *
  */
-final class DecksOfCards {
+final class Deck {
     
     private static final int CARDS_IN_DECK = 52;
     private final List<Card> cards = new ArrayList<>();
@@ -19,27 +18,37 @@ final class DecksOfCards {
     private int shuffledAt = 13;
     
     /**
-     * Default constructor that uses one deck of cards.
-     */
-    DecksOfCards() {
-        this(1);
-    }
-    
-    /**
-     * Constructor that takes number of decks used as argument.
+     * Takes number of decks used as argument (each deck will add 52 cards to the overall deck).
      * 
      * @param numberOfDecks the number of decks used
      */
-    DecksOfCards(int numberOfDecks) {
+    Deck(int numberOfDecks) {
+//        if (numberOfDecks < 1) {
+//            numberOfDecks = 1;
+//        }
+//        assert numberOfDecks < 1;
         this.numberOfDecks = numberOfDecks;
-        initCards(numberOfDecks);
+        shuffleCards(numberOfDecks);
         Collections.shuffle(cards);
         setShuffledAtPercent(75);
 //        System.out.println(needsShuffle);
     }
     
-    // Initializes cards list (adds cards to the list), number of decks added depends on argument
-    private void initCards(int numberOfDecks) {
+    /**
+     * Makes new deck (uses number of decks that was specified in construction).
+     * Use overloaded method (by adding {@code int} argument) to use specific number of decks.
+     */
+    void shuffleCards() {
+        shuffleCards(numberOfDecks);
+    }
+    
+    /**
+     * Makes new deck (using amount of decks specified by the argument).
+     * 
+     * @param numberOfDecks the number of decks added (to the overall deck)
+     */
+    void shuffleCards(int numberOfDecks) {
+        cards.clear();
         for (int i = 0; i < numberOfDecks; i++) {
             for (Suit s : Suit.values()) {
                 for (Rank r : Rank.values()) {
@@ -59,7 +68,7 @@ final class DecksOfCards {
         // Creates new deck if ran out of cards (can happen if shuffledAt is low enough)
         if (cards.size() < 1) {
             System.out.println("NEW DECK WAS CREATED !!! (because deck ran out of cards)");
-            initCards(numberOfDecks);
+            shuffleCards(numberOfDecks);
         }
         Card result = cards.get(cards.size() - 1);
         cards.remove(cards.size() - 1);
@@ -68,7 +77,7 @@ final class DecksOfCards {
     
     /**
      * Set how large percentage of cards are needed to be dealt before deck of cards 
-     * needs to be shuffled (needsShuffling() methods starts to return true). Default 75%.
+     * needs to be shuffled ({@code needsShuffling()} methods starts to return {@code true}). Default 75%.
      * 
      * @param shuffledAtPercent the percent (cards dealt) at witch deck of cards needs to be shuffled
      */
@@ -78,7 +87,7 @@ final class DecksOfCards {
     }
     
     /**
-     * Returns true if deck of cards needs to be shuffled (new deck needs to be created)
+     * Returns {@code true} if deck of cards needs to be shuffled (and new cards added).
      */
     boolean needsShuffling() {
         return shuffledAt > cards.size();
@@ -96,7 +105,7 @@ final class DecksOfCards {
      */
     @Override
     public String toString() {
-        return "DecksOfCards(size " + cards.size() + ") = " + cards;
+        return "Deck(size " + cards.size() + ") = " + cards;
     }
     
     
