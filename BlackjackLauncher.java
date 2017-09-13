@@ -21,25 +21,26 @@ public final class BlackjackLauncher extends Application {
         View view = new View(controller, model);
         
         primaryStage.setTitle("Blackjack");
-        Scene scene = new Scene(view.getLayout(), 800, 600);
+        Scene scene = new Scene(view.getLayout(), 790, 590);
+        scene.setOnKeyPressed(controller);
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
     }
     
     public static void main(String[] args) {
-      Deck cards = new Deck(1);
-      System.out.println(cards);
-      System.out.println(cards.pop());
-      System.out.println(cards.pop());
-      System.out.println(cards.needsShuffling());
-      for (int i = 0; i < 38; i++) {
-          System.out.println(cards.pop());
-      }
-      System.out.println(cards.needsShuffling());
-      System.out.println(cards);
-      cards.setShuffledAtPercent(75);
-      System.out.println(cards.needsShuffling());
+//      Deck cards = new Deck(1);
+//      System.out.println(cards);
+//      System.out.println(cards.pop());
+//      System.out.println(cards.pop());
+//      System.out.println(cards.needsShuffling());
+//      for (int i = 0; i < 38; i++) {
+//          System.out.println(cards.pop());
+//      }
+//      System.out.println(cards.needsShuffling());
+//      System.out.println(cards);
+//      cards.setShuffledAtPercent(75);
+//      System.out.println(cards.needsShuffling());
       
       launch();
   }

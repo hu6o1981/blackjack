@@ -101,7 +101,7 @@ final class Deck {
     }
     
     /**
-     * Returns deck size and cards currently in deck (in string form).
+     * Returns deck size and cards currently in deck (in {@code String} form).
      */
     @Override
     public String toString() {
