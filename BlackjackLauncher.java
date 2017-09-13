@@ -17,8 +17,8 @@ public final class BlackjackLauncher extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Model model = new Model();
-        Controller controller = new Controller(model);
-        View view = new View(controller, model);
+        View view = new View(model);
+        Controller controller = new Controller(model, view);
         
         primaryStage.setTitle("Blackjack");
         Scene scene = new Scene(view.getLayout(), 790, 590);
@@ -29,19 +29,6 @@ public final class BlackjackLauncher extends Application {
     }
     
     public static void main(String[] args) {
-//      Deck cards = new Deck(1);
-//      System.out.println(cards);
-//      System.out.println(cards.pop());
-//      System.out.println(cards.pop());
-//      System.out.println(cards.needsShuffling());
-//      for (int i = 0; i < 38; i++) {
-//          System.out.println(cards.pop());
-//      }
-//      System.out.println(cards.needsShuffling());
-//      System.out.println(cards);
-//      cards.setShuffledAtPercent(75);
-//      System.out.println(cards.needsShuffling());
-      
       launch();
   }
 }

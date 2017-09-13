@@ -13,18 +13,51 @@ import javafx.scene.input.MouseEvent;
 final class Controller implements EventHandler<KeyEvent>{
     
     private final Model model;
+    private final View view;
     
     /**
-     * Specify {@code Model} object used by this {@code Controller}.
+     * Constructs {@code Controller} object that uses given {@code Model} and {@code View} objects.
      */
-    Controller(Model model) {
+    Controller(Model model, View view) {
         this.model = model;
+        this.view = view;
     }
 
     @Override
     public void handle(KeyEvent event) {
         System.out.println(event.getText());
-        System.out.println(event.getTarget());
+        
+        // Handling different key events:
+        switch (event.getText().toLowerCase()) {
+        case "s":
+            model.start();
+            view.update();
+            break;
+        case "c":
+            model.clearAll();
+            view.update();
+            break;
+        case "1":
+            model.hit();
+            view.update();
+            break;
+        case "2":
+            model.stand();
+            view.update();
+            break;
+        case "3":
+            model.doubleing();
+            view.update();
+            break;
+        case "4":
+            model.split();
+            view.update();
+            break;
+        case "5":
+            model.surrender();
+            view.update();
+            break;
+        }
     }
 
 //    @Override

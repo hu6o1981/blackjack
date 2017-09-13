@@ -7,19 +7,25 @@ package com.gmail.hugoleemet;
  *
  */
 enum Suit {
-    HEART("Heart"),
-    DIAMOND("Diamond"),
-    CLUB("Club"),
-    SPADE("Spade");
+    HEART("Heart", '\u2665'),
+    DIAMOND("Diamond", '\u2666'),
+    CLUB("Club", '\u2663'),
+    SPADE("Spade", '\u2660');
     
     private final String name;
+    private final char unicode;
     
-    Suit(String name) {
+    Suit(String name, char unicode) {
         this.name = name;
+        this.unicode = unicode;
     }
     
     String getName() {
         return name;
+    }
+    
+    char getUnicode() {
+        return unicode;
     }
     
 }
