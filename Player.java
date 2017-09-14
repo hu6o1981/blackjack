@@ -11,6 +11,8 @@ import java.util.List;
 final class Player {
     
     private int balance;
+    private int bet = 10;
+    private String statusText = "PRESS S TO START GAME";
     private final List<Card> cards = new ArrayList<>();
     
     /**
@@ -24,6 +26,22 @@ final class Player {
         return cards;
     }
     
+    int getBet() {
+        return bet;
+    }
+    
+    int getBalance() {
+        return balance;
+    }
+    
+    String getStatusText() {
+        return statusText;
+    }
+    
+    void setStatusText(String statusText) {
+        this.statusText = statusText;
+    }
+    
     /**
      * Give player a card.
      */
@@ -34,13 +52,11 @@ final class Player {
     /**
      * Removes all cards from the player.
      */
-    void takeCards() {
+    void removeCards() {
         cards.clear();
     }
     
-    int getBalance() {
-        return balance;
-    }
+
     
     /**
      * Changes player balance by given amount (negative subtracts).

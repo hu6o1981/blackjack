@@ -61,6 +61,10 @@ final class Model {
     void start() {
         if (canStart) {
             System.out.println("Starting...");
+            player.setStatusText("");
+            dealer.setStatusText("");
+            player.removeCards();
+            dealer.removeCards();
             canStart = false;
             dealer.dealCards();
             canClearAll = true;
@@ -72,21 +76,35 @@ final class Model {
     void clearAll() {
         if (canClearAll) {
             System.out.println("Clearing all...");
-            // TODO
+            player.setStatusText("PRESS S TO START GAME");
+            dealer.setStatusText("");
+            player.removeCards();
+            dealer.removeCards();
+            canStart = true;
+            canClearAll = false;
+            canHit = false;
+            canStand = false;
+            canDouble = false;
+            canSplit = false;
+            canSurrender = false;
         }
     }
     
     void hit() {
         if (canHit) {
             System.out.println("Hitting...");
-            dealer.dealCards();
+            dealer.dealACard();
+            checkIfPlayerBust();
         }
     }
     
     void stand() {
         if (canStand) {
             System.out.println("Standing...");
-            dealer.checkCards();
+            dealer.checkToTakeCards();
+            if (!isDealerBust()) {
+                checkWhoWon();
+            }
         }
     }
     
@@ -110,5 +128,72 @@ final class Model {
             // TODO
         }
     }
+    
+    private void checkIfPlayerBust() {
+        if (Util.handIsBust(player.getCards())) {
+            playerLost();
+            player.setStatusText("BUST");
+        }
+    }
+    
+    private boolean isDealerBust() {
+        if (Util.handIsBust(dealer.getCards())) {
+            playerWon();
+            dealer.setStatusText("BUST");
+            return true;
+        }
+        return false;
+    }
+    
+    private void checkWhoWon() {
+        if (Util.cardsValue(player.getCards()) > Util.cardsValue(dealer.getCards())) {
+            player.setStatusText("YOU WIN");
+            playerWon();
+        } else if (Util.cardsValue(player.getCards()) < Util.cardsValue(dealer.getCards())) {
+            player.setStatusText("YOU LOSE");
+            playerLost();
+        } else {
+            player.setStatusText("DRAW");
+            draw();
+        }
+    }
+    
+    private void checkBlackjack() {
+        
+    }
+    
+    private void playerWon() {
+        canStart = true;
+        canClearAll = true;
+        canHit = false;
+        canStand = false;
+        canDouble = false;
+        canSplit = false;
+        canSurrender = false;
+        player.changeBalance(+player.getBet());
+    }
+    
+    private void playerLost() {
+        canStart = true;
+        canClearAll = true;
+        canHit = false;
+        canStand = false;
+        canDouble = false;
+        canSplit = false;
+        canSurrender = false;
+        player.changeBalance(-player.getBet());
+    }
+    
+    private void draw() {
+        canStart = true;
+        canClearAll = true;
+        canHit = false;
+        canStand = false;
+        canDouble = false;
+        canSplit = false;
+        canSurrender = false;
+    }
+    
+ 
     
 }

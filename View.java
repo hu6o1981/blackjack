@@ -67,7 +67,34 @@ final class View {
     // Updates cards shown in GUI
     private void updateCards() {
         displayHand(40, model.getDealer().getCards());
-        displayHand(310, model.getPlayer().getCards());
+        updateCardValues(160, model.getDealer().getCards());
+        updateHandStatusText(180, model.getDealer().getStatusText());
+        displayPlayerHand(300, model.getPlayer().getCards(), model.getPlayer().getStatusText());
+    }
+    
+    // Displays player hand
+    private void displayPlayerHand(double height, List<Card> cards, String statusText) {
+        updateHandStatusText(height - 20, statusText);
+        updateCardValues(height, cards);
+        displayHand(height + 10, cards);
+    }
+    
+    private void updateHandStatusText(double height, String statusText) {
+        if (statusText.length() > 0) {
+          gc.setFill(Color.YELLOW);
+          gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 20));
+          gc.fillText(statusText, 395 - (statusText.length() * 6), height);
+        }
+    }
+    
+    private void updateCardValues(double height, List<Card> cards) {
+        if (cards.size() > 0) {
+            String valuesText = String.format("%s", Util.cardsValue(cards));
+//          valuesText = "Sample Text";
+          gc.setFill(Color.YELLOW);
+          gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 20));
+          gc.fillText(valuesText, 395 - (valuesText.length() * 6), height);
+        }
     }
     
     // Display hand (list of cards) in specified height (position on the table)
@@ -91,7 +118,7 @@ final class View {
             handPosition += 70;
         }
     }
-
+    
     // Updates text part of GUI
     private void updateText() {
         // Player actions
@@ -116,9 +143,9 @@ final class View {
         
         gc.setFont(Font.font("monospaced", FontWeight.BOLD, 20));
         gc.setFill(Color.YELLOW);
-        gc.fillText("1000 €", 30, 575);
-        gc.fillText("10", 330, 575);
-        gc.fillText("-10", 630, 575);
+        gc.fillText(String.format("%s €", model.getPlayer().getBalance()), 30, 575);
+        gc.fillText(String.format("%s €", model.getPlayer().getBet()), 330, 575);
+        gc.fillText(String.format("%s €", model.getPlayer().getBet()), 630, 575);
     }
     
     // Changes color depending if button can be pressed (set by canPress boolean).
