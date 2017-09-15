@@ -66,16 +66,31 @@ final class View {
     
     // Updates cards shown in GUI
     private void updateCards() {
-        displayHand(40, model.getDealer().getCards());
-        updateCardValues(160, model.getDealer().getCards());
-        updateHandStatusText(180, model.getDealer().getStatusText());
-        displayPlayerHand(300, model.getPlayer().getCards(), model.getPlayer().getStatusText());
+        displayHand(20, model.getDealer().getCards());
+        updateCardValues(135, model.getDealer().getCards());
+        updateHandStatusText(155, model.getDealer().getStatusText());
+        if (model.getPlayerSplit()) {
+            displaySplitPleyer(300, model.getPlayer().getCards());
+        } else {
+            displayPlayerHand(300, model.getPlayer().getCards());
+        }
+    }
+    
+    
+    // Display player hands when it has split.
+    private void displaySplitPleyer(double height, List<Card> cards) {
+        // Active hand
+        displayPlayerHand(height - 90, cards);
+        // Inactive hand
+        updateHandStatusText(height + 51, model.getPlayer().getInactiveStatusText());
+        updateCardValues(height + 71, model.getPlayer().getInactiveHand());
+        displayHand(height + 80, model.getPlayer().getInactiveHand());
     }
     
     // Displays player hand
-    private void displayPlayerHand(double height, List<Card> cards, String statusText) {
-        updateHandStatusText(height - 20, statusText);
-        updateCardValues(height, cards);
+    private void displayPlayerHand(double height, List<Card> cards) {
+        updateHandStatusText(height - 20, model.getPlayer().getStatusText());
+        updateCardValues(height , cards);
         displayHand(height + 10, cards);
     }
     
@@ -83,7 +98,7 @@ final class View {
         if (statusText.length() > 0) {
           gc.setFill(Color.YELLOW);
           gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 20));
-          gc.fillText(statusText, 395 - (statusText.length() * 6), height);
+          gc.fillText(statusText, 395 - (statusText.length() * 6), height + 4);
         }
     }
     
@@ -93,7 +108,7 @@ final class View {
 //          valuesText = "Sample Text";
           gc.setFill(Color.YELLOW);
           gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 20));
-          gc.fillText(valuesText, 395 - (valuesText.length() * 6), height);
+          gc.fillText(valuesText, 395 - (valuesText.length() * 6), height + 4);
         }
     }
     
@@ -105,10 +120,14 @@ final class View {
             gc.fillRect(handPosition - 1, height - 1, 62, 102);
             gc.setFill(Color.LIGHTGOLDENRODYELLOW);
             gc.fillRect(handPosition, height, 60, 100);
+            // Sets needed colors (to cards)
             if (card.getSuit() == Suit.HEART || card.getSuit() == Suit.DIAMOND) {
                 gc.setFill(Color.RED);
             } else {
                 gc.setFill(Color.BLACK);
+            }
+            if (cards == model.getPlayer().getInactiveHand()) {
+                gc.setFill(Color.DARKGRAY);
             }
             gc.setFont(Font.font("monospaced", FontWeight.BOLD, 14));
             gc.fillText(card.getRank().getName(), handPosition + 1, height + 11);
@@ -132,7 +151,7 @@ final class View {
         fillText("4.SPLIT", 480, 500, model.canPressSplit());
         fillText("5.SURRENDER", 630, 500, model.canPressSurrender());
         
-        // Balance
+        // Balance (money)
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 530, 800, 70);
         gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 14));
@@ -145,7 +164,9 @@ final class View {
         gc.setFill(Color.YELLOW);
         gc.fillText(String.format("%s €", model.getPlayer().getBalance()), 30, 575);
         gc.fillText(String.format("%s €", model.getPlayer().getBet()), 330, 575);
-        gc.fillText(String.format("%s €", model.getPlayer().getBet()), 630, 575);
+        if (model.getWinText() != "") {
+            gc.fillText(String.format("%s €", model.getWinText()), 630, 575);
+        }
     }
     
     // Changes color depending if button can be pressed (set by canPress boolean).
