@@ -83,8 +83,8 @@ final class View {
         displayPlayerHand(height - 90, cards);
         // Inactive hand
         updateHandStatusText(height + 51, model.getPlayer().getInactiveStatusText());
-        updateCardValues(height + 71, model.getPlayer().getInactiveHand());
-        displayHand(height + 80, model.getPlayer().getInactiveHand());
+        updateCardValues(height + 71, model.getPlayer().getInactiveCards());
+        displayHand(height + 80, model.getPlayer().getInactiveCards());
     }
     
     // Displays player hand
@@ -105,7 +105,6 @@ final class View {
     private void updateCardValues(double height, List<Card> cards) {
         if (cards.size() > 0) {
             String valuesText = String.format("%s", Util.cardsValue(cards));
-//          valuesText = "Sample Text";
           gc.setFill(Color.YELLOW);
           gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 20));
           gc.fillText(valuesText, 395 - (valuesText.length() * 6), height + 4);
@@ -126,7 +125,7 @@ final class View {
             } else {
                 gc.setFill(Color.BLACK);
             }
-            if (cards == model.getPlayer().getInactiveHand()) {
+            if (cards == model.getPlayer().getInactiveCards()) {
                 gc.setFill(Color.DARKGRAY);
             }
             gc.setFont(Font.font("monospaced", FontWeight.BOLD, 14));
@@ -142,45 +141,62 @@ final class View {
     private void updateText() {
         // Player actions
         gc.setFont(Font.font("monospaced", FontWeight.BOLD, 20));
-        gc.setFill(Color.BLUE);
-        fillText("S.START", 30, 460, model.canPressStart());
-        fillText("C.CLEAR ALL", 630, 460, model.canPressClearAll());
-        fillText("1.HIT", 30, 500, model.canPressHit());
-        fillText("2.STAND", 180, 500, model.canPressStand());
-        fillText("3.DOUBLE", 330, 500, model.canPressDouble());
-        fillText("4.SPLIT", 480, 500, model.canPressSplit());
-        fillText("5.SURRENDER", 630, 500, model.canPressSurrender());
+        Color active = Color.BLUE;  // Color.DARKBLUE;
+        fillText("S.START", 30, 460, model.canPressStart(), active);
+        fillText("C.CLEAR ALL", 630, 460, model.canPressClearAll(), Color.DARKRED);
+        fillText("1.HIT", 30, 500, model.canPressHit(), active);
+        fillText("2.STAND", 180, 500, model.canPressStand(), active);
+        fillText("3.DOUBLE", 330, 500, model.canPressDouble(), active);
+        fillText("4.SPLIT", 480, 500, model.canPressSplit(), active);
+        fillText("5.SURRENDER", 630, 500, model.canPressSurrender(), active);
         
-        // Balance (money)
+        // Bottom part (balance, bet etc):
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 530, 800, 70);
         gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 14));
         gc.setFill(Color.YELLOW);
         gc.fillText("BALANCE", 30, 555);
-        gc.fillText("BET", 330, 555);
+        if (model.canPressStart()) {
+            gc.fillText("NEW BET", 330, 555);
+        } else {
+            gc.fillText("INITIAL BET", 330, 555);
+        }
+        gc.fillText("BET", 480, 555);
         gc.fillText("WIN", 630, 555);
+        // Lowering rising bet
+        fillText("R.RAISE", 180, 555, model.canPressRaise(), Color.YELLOW);
+        fillText("F.LOWER", 180, 575, model.canPressLower(), Color.YELLOW);
         
         gc.setFont(Font.font("monospaced", FontWeight.BOLD, 20));
         gc.setFill(Color.YELLOW);
+        if (model.getPlayer().getBalance() < 10) {
+            gc.setFill(Color.RED);
+        } else {
+            gc.setFill(Color.YELLOW);
+        }
         gc.fillText(String.format("%s €", model.getPlayer().getBalance()), 30, 575);
-        gc.fillText(String.format("%s €", model.getPlayer().getBet()), 330, 575);
-        if (model.getWinText() != "") {
-            gc.fillText(String.format("%s €", model.getWinText()), 630, 575);
+        gc.setFill(Color.YELLOW);
+        gc.fillText(String.format("%s €", model.getPlayer().getDefaultBet()), 330, 575);
+        gc.fillText(String.format("%s €", model.getPlayer().getBalanceSpent()), 480, 575);
+        // Displays win (money) if there is any.
+        if (model.getWin() != 0) {
+            gc.fillText(String.format("%s €", model.getWin()), 630, 575);
         }
     }
     
     // Changes color depending if button can be pressed (set by canPress boolean).
-    private void fillText(String text, double x, double y, boolean canPress) {
+    private void fillText(String text, double x, double y, boolean canPress, Color colorWhenActive) {
         if (canPress) {
-            gc.setFill(Color.BLUE);
+            gc.setFill(colorWhenActive);
         } else {
-            gc.setFill(Color.DARKGREEN);
+            if (y < 530) {
+                gc.setFill(Color.DARKGREEN);
+            } else {
+                gc.setFill(Color.BLACK);
+            }
         }
         gc.fillText(text, x, y);
     }
-    
-    
-    
     
     
     

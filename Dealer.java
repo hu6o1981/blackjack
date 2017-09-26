@@ -15,7 +15,6 @@ final class Dealer {
     private String statusText = "";
     private final List<Card> cards = new ArrayList<>();
     
-    
     /**
      * Constructs {@code Dealer} object who deals with given player using given deck.
      */
@@ -40,7 +39,7 @@ final class Dealer {
      * Deals cards (at the start).
      */
     void dealCards() {
-        System.out.println("Dealing cards...");
+//        System.out.println("Dealing cards...");
         if (cards.size() < 1) {
             givePlayerACard();
             takeHimselfACard();
@@ -55,7 +54,7 @@ final class Dealer {
      * Deals a card (one card to a player).
      */
     void dealACard() {
-        System.out.println("Dealing cards...");
+//        System.out.println("Dealing cards...");
         givePlayerACard();
     }
     

@@ -10,7 +10,7 @@ import javafx.stage.Stage;
  * Blackjack - A card game where you win by having more points than dealer (but not more than 21).
  * 
  * @author Hugo
- * @version 0.1
+ * @version 0.2
  */
 public final class BlackjackLauncher extends Application {
     

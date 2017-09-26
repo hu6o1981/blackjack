@@ -1,9 +1,7 @@
 package com.gmail.hugoleemet;
 
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 
 /**
  * The {@code Controller} class executes player inputs.
@@ -25,7 +23,7 @@ final class Controller implements EventHandler<KeyEvent>{
 
     @Override
     public void handle(KeyEvent event) {
-        System.out.println(event.getText());
+//        System.out.println(event.getText());
         
         // Handling different key events:
         switch (event.getText().toLowerCase()) {
@@ -55,6 +53,14 @@ final class Controller implements EventHandler<KeyEvent>{
             break;
         case "5":
             model.surrender();
+            view.update();
+            break;
+        case "r":
+            model.raise();;
+            view.update();
+            break;
+        case "f":
+            model.lower();
             view.update();
             break;
         }

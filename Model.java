@@ -7,8 +7,10 @@ package com.gmail.hugoleemet;
  */
 final class Model {
     
+    private static final int MIN_BET = 10;
+    
     private final Deck deck = new Deck(6);
-    private final Player player = new Player(1000);
+    private final Player player = new Player(100);
     private final Dealer dealer = new Dealer(player, deck);
     
     // Controls
@@ -19,10 +21,11 @@ final class Model {
     private boolean canDouble = false;
     private boolean canSplit = false;
     private boolean canSurrender = false;
-    
+    // Split flags (if player is split in different stages of the game)
     private boolean playerSplit = false;
-    private boolean playerOnSecondHand = false;
-    private String winText = "";
+    private boolean playerOnSecondHand = false; // Player plays on second (last playable) hand, when split.
+    
+    private int win = 0;
     
     Player getPlayer() {
         return player;
@@ -32,8 +35,8 @@ final class Model {
         return dealer;
     }
     
-    String getWinText() {
-        return winText;
+    int getWin() {
+        return win;
     }
     
     boolean getPlayerSplit() {
@@ -73,15 +76,30 @@ final class Model {
     }
     
     /**
+     * Returns {@code true} if bet can be raised.
+     */
+    boolean canPressRaise() {
+        return canStart && player.getDefaultBet() + MIN_BET <= player.getBalance();
+    }
+    
+    /**
+     * Returns {@code true} if bet can be lowered.
+     */
+    boolean canPressLower() {
+        return canStart && player.getDefaultBet() > MIN_BET;
+    }
+    
+    /**
      * Computer turn (does what ever is necessary at this point in game).
      */
     void start() {
         if (canStart) {
-            System.out.println("Starting...");
+//            System.out.println("Starting...");
+            player.resetBalanceSpent();
             player.setStatusText("");
             player.setInactiveStatusText("");
             dealer.setStatusText("");
-            winText = "";
+            win = 0;
             player.removeCards();
             dealer.removeCards();
             canStart = false;
@@ -89,8 +107,12 @@ final class Model {
             canClearAll = true;
             canHit = true;
             canStand = true;
-            // For testing
+            // For testing set to true (TODO must be based on game logic)
             canSplit = true;
+            
+            player.setBet(player.getDefaultBet() * 2);
+            player.setInactiveBet(0);
+            player.changeBalance(-player.getDefaultBet());
             
             // Starts new game after split
             if (playerOnSecondHand) {
@@ -104,38 +126,35 @@ final class Model {
     
     void clearAll() {
         if (canClearAll) {
-            System.out.println("Clearing all...");
+//            System.out.println("Clearing all...");
+            player.resetBalanceSpent();
             player.setStatusText("PRESS S TO START GAME");
             player.setInactiveStatusText("");
             dealer.setStatusText("");
-            winText = "";
             player.removeCards();
             dealer.removeCards();
             player.resetBalance();
-            canStart = true;
+            player.setDefaultBet(10);
+            resetControlsForNewGame();
             canClearAll = false;
-            canHit = false;
-            canStand = false;
-            canDouble = false;
-            canSplit = false;
-            canSurrender = false;
+            playerSplit = false;
+            playerOnSecondHand = false;
         }
     }
     
     void hit() {
         if (canHit) {
-            System.out.println("Hitting...");
+//            System.out.println("Hitting...");
             dealer.dealACard();
             checkIfPlayerBust();
         }
     }
     
     void stand() {
-        System.out.println("playerOnSecondHand = " + playerOnSecondHand);
-        System.out.println("playerSplit = " + playerSplit);
-        
+//        System.out.println("playerOnSecondHand = " + playerOnSecondHand);
+//        System.out.println("playerSplit = " + playerSplit);
         if (canStand) {
-            // If player is standing second time when split (standing on last playable hand)
+            // If player is standing second time when split (standing on last playable hand).
             if (playerOnSecondHand) {
                 dealer.checkToTakeCards();
                 if (!isDealerBust()) {
@@ -147,12 +166,8 @@ final class Model {
                     player.swapActiveHand();
                     isDealerBust();
                     player.swapActiveHand();
-                    
-//                    player.swapActiveHand();
-//                    checkWhoWon();
-//                    player.swapActiveHand();
                 }
-             // If player is standing while being split (standing on first hand)
+            // If player is standing while being split (standing on first hand).
             } else if (playerSplit) {
                 playerOnSecondHand = true;
                 canStart = false;
@@ -185,7 +200,7 @@ final class Model {
             System.out.println("Splitting...");
             player.split();
             playerSplit = true;
-            // TODO
+            // TODO Can only split with similar cards
         }
     }
     
@@ -196,26 +211,33 @@ final class Model {
         }
     }
     
+    void raise() {
+        if (canPressRaise()) {
+//            System.out.println("Raising...");
+            player.setDefaultBet(player.getDefaultBet() + MIN_BET);
+        }
+    }
+    
+    void lower() {
+        if (canPressLower()) {
+//            System.out.println("Lowering...");
+            player.setDefaultBet(player.getDefaultBet() - MIN_BET);
+        }
+    }
+    
     private void checkIfPlayerBust() {
         if (Util.handIsBust(player.getCards())) {
-//            player.setStatusText("BUST");
-//            playerLost();
             // If players busted on second hands (when split)
             if (playerOnSecondHand) {
                 player.swapActiveHand();
                 dealer.checkToTakeCards();
-                // Needs testing
                 isDealerBust();
                 checkWhoWon();
                 player.swapActiveHand();
             // If players busted on first hands  (when split)
             } else if (playerSplit) {
-                
-                
             // Player busted while not split
-            } else {
-            }
-            player.setStatusText("BUST");
+            } else {}
             playerLost();
         }
     }
@@ -234,18 +256,12 @@ final class Model {
     private void checkWhoWon() {
         int playerScore = Util.cardsValue(player.getCards());
         int dealerScore = Util.cardsValue(dealer.getCards());
-        System.out.println("playerScore = " + playerScore + " dealerScore = " + dealerScore);
+//        System.out.println("playerScore = " + playerScore + " dealerScore = " + dealerScore);
         if (playerScore > dealerScore && playerScore <= 21) {
-            player.setStatusText("YOU WIN");
-            System.out.println("YOU WIN");
             playerWon();
         } else if (playerScore < dealerScore && dealerScore <= 21) {
-            player.setStatusText("YOU LOSE");
-            System.out.println("YOU LOSE");
             playerLost();
         } else if (playerScore == dealerScore) {
-            player.setStatusText("DRAW");
-            System.out.println("DRAW");
             draw();
         }
     }
@@ -255,33 +271,33 @@ final class Model {
     }
     
     private void playerWon() {
-        player.changeBalance(player.getBet());
-        winText = String.format("+%s", player.getBet());
+        player.setStatusText("YOU WIN");
         gameEnded();
     }
     
     private void playerLost() {
-        player.changeBalance(-player.getBet());
-        winText = String.format("-%s", player.getBet());
+        player.setBet(0);
+        if (Util.handIsBust(player.getCards())) {
+            player.setStatusText("BUST");
+        } else {
+            player.setStatusText("YOU LOSE");
+        }
         gameEnded();
     }
     
     private void draw() {
-        winText = String.format("%s", 0);
+        player.setStatusText("DRAW");
+        player.setBet(player.getBet() / 2);
         gameEnded();
     }
     
-    // One game ended (can start again)
+    // One game ended (can start again).
     private void gameEnded() {
         // If players second hands game ended (when split)
         if (playerOnSecondHand) {
-            canStart = true;
-            canClearAll = true;
-            canHit = false;
-            canStand = false;
-            canDouble = false;
-            canSplit = false;
-            canSurrender = false;
+            win = player.getBet() + player.getInactiveBet();
+            player.changeBalance(player.getBet());
+            resetControlsForNewGame();
             System.out.println("can start again");
         // If players first hands game ended (when split)
         } else if (playerSplit) {
@@ -291,16 +307,33 @@ final class Model {
             playerOnSecondHand = true;
         // Game ended when not split
         } else {
-            canStart = true;
-            canClearAll = true;
-            canHit = false;
-            canStand = false;
-            canDouble = false;
-            canSplit = false;
-            canSurrender = false;
+            win = player.getBet();
+            player.changeBalance(player.getBet());
+            resetControlsForNewGame();
         }
-
     }
- 
+    
+    // TODO Can get bugged when split and run out of money (seems to be fixed now).
+    private void resetControlsForNewGame() {
+        // Checks if enough money (so that can start another game).
+        canStart = player.getBalance() >= MIN_BET;
+        if (canStart) {
+            while (player.getBalance() < player.getDefaultBet()) {
+                lower();
+            }
+        } else {
+            String noMoneyWarning = " / NOT ENOUGH MONEY FOR MINIMUM BET OF " + MIN_BET + " €";
+            player.setStatusText(player.getStatusText() + noMoneyWarning);
+            String inactiveText = player.getInactiveStatusText();
+            // To prevent noMoneyWarning to be displayed twice (is erased from inactive hand status text).
+            player.setInactiveStatusText(inactiveText.replace(noMoneyWarning, ""));
+        }
+        canClearAll = true;
+        canHit = false;
+        canStand = false;
+        canDouble = false;
+        canSplit = false;
+        canSurrender = false;
+    }
     
 }

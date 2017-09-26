@@ -26,7 +26,6 @@ final class Deck {
 //        if (numberOfDecks < 1) {
 //            numberOfDecks = 1;
 //        }
-//        assert numberOfDecks < 1;
         this.numberOfDecks = numberOfDecks;
         shuffleCards(numberOfDecks);
         Collections.shuffle(cards);
@@ -67,7 +66,7 @@ final class Deck {
     Card pop() {
         // Creates new deck if ran out of cards (can happen if shuffledAt is low enough)
         if (cards.size() < 1) {
-            System.out.println("NEW DECK WAS CREATED !!! (because deck ran out of cards)");
+//            System.out.println("NEW DECK WAS CREATED !!! (because deck ran out of cards)");
             shuffleCards(numberOfDecks);
         }
         Card result = cards.get(cards.size() - 1);

@@ -12,12 +12,15 @@ final class Player {
     
     private final int initialBalance;
     private int balance;
-    private int bet = 10;
+    private int balanceSpent = 0;
+    private int defaultBet = 10;
     
+    private int bet = 0;
+    private int inactiveBet = 0;
     private String statusText = "PRESS S TO START GAME";
     private String inactiveStatusText = "SAMPLE TEXT";
     private List<Card> cards = new ArrayList<>();
-    private List<Card> inactiveHand = new ArrayList<>();
+    private List<Card> inactiveCards = new ArrayList<>();
     
     /**
      * Constructs {@code Player} object with set initial balance.
@@ -31,18 +34,34 @@ final class Player {
         return cards;
     }
     
-    List<Card> getInactiveHand() {
-        return inactiveHand;
+    List<Card> getInactiveCards() {
+        return inactiveCards;
+    }
+    
+    int getDefaultBet() {
+        return defaultBet;
+    }
+    
+    void setBet(int bet) {
+        this.bet = bet;
     }
     
     int getBet() {
         return bet;
     }
     
-    int getBalance() {
-        return balance;
+    void setDefaultBet(int defaultBet) {
+        this.defaultBet = defaultBet;
     }
     
+    int getInactiveBet() {
+        return inactiveBet;
+    }
+    
+    void setInactiveBet(int inactiveBet) {
+        this.inactiveBet = inactiveBet;
+    }
+
     String getStatusText() {
         return statusText;
     }
@@ -59,8 +78,20 @@ final class Player {
         this.inactiveStatusText = inactiveStatusText;
     }
     
+    int getBalance() {
+        return balance;
+    }
+    
     void resetBalance() {
         balance = initialBalance;
+    }
+    
+    int getBalanceSpent() {
+        return balanceSpent;
+    }
+    
+    void resetBalanceSpent() {
+        balanceSpent = 0;
     }
     
     /**
@@ -75,7 +106,7 @@ final class Player {
      */
     void removeCards() {
         cards.clear();
-        inactiveHand.clear();
+        inactiveCards.clear();
     }
     
     /**
@@ -85,31 +116,43 @@ final class Player {
         if (cards.size() == 2) {
             Card cardToBeMoved = cards.get(cards.size() - 1);
             cards.remove(cards.size() - 1);
-            inactiveHand.add(cardToBeMoved);
+            inactiveCards.add(cardToBeMoved);
+            changeBalance(-defaultBet);
+            inactiveBet = bet;
         }
     }
     
     /**
-     * Swaps active ({@code cards}) and inactive hand ({@code inactiveHand}).
-     * Swaps all relevant information (both cards and texts).
+     * Swaps all relevant information between active and inactive hand(cards, texts and bets).
+     * For Example swaps active ({@code cards}) and inactive hand ({@code inactiveCards}) lists.
      */
     void swapActiveHand() {
+        // TODO separate hand objects (and swap those)?
         // Swapping cards (lists)
-        List<Card> temp = inactiveHand;
-        inactiveHand = cards;
+        List<Card> temp = inactiveCards;
+        inactiveCards = cards;
         cards = temp;
         
         // Swapping texts
         String tempText = inactiveStatusText;
         inactiveStatusText = statusText;
         statusText = tempText;
+        
+        // Swapping bets
+        int tempBet = inactiveBet;
+        inactiveBet = bet;
+        bet = tempBet;
     }
     
     /**
      * Changes player balance by given amount (negative subtracts).
+     * Also changes banaceSpent (if needed).
      */
     void changeBalance(int change) {
         balance += change;
+        if (change < 0) {
+            balanceSpent += -change;
+        }
     }
     
 }
