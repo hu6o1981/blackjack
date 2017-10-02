@@ -45,9 +45,9 @@ final class View {
         gc.setFill(Color.GREEN);
         gc.fillRect(0, 0, 800, 600);
         
-        updateCards();
         updateText();
-        
+        updateRules();
+        updateCards();
         
         // Displays array of card symbols
 //        gc.setFill(Color.BLACK);
@@ -63,7 +63,7 @@ final class View {
 //            }
 //        }
     }
-    
+
     // Updates cards shown in GUI
     private void updateCards() {
         displayHand(20, model.getDealer().getCards());
@@ -104,7 +104,11 @@ final class View {
     
     private void updateCardValues(double height, List<Card> cards) {
         if (cards.size() > 0) {
-            String valuesText = String.format("%s", Util.cardsValue(cards));
+            int cardsValue = Util.cardsValue(cards);
+            String valuesText = String.format("%s", cardsValue);
+            if (Util.cardsValueCanBeLowered(cards) && cardsValue != 21) {
+                valuesText += String.format("%s", " / " + (cardsValue - 10));
+            } 
           gc.setFill(Color.YELLOW);
           gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 20));
           gc.fillText(valuesText, 395 - (valuesText.length() * 6), height + 4);
@@ -125,7 +129,9 @@ final class View {
             } else {
                 gc.setFill(Color.BLACK);
             }
-            if (cards == model.getPlayer().getInactiveCards()) {
+            // Grays out inactive hand (when there is at least one hand in play but not when game has already ended).
+            if ((cards == model.getPlayer().getInactiveCards() && !model.canPressStart()) 
+                    && (cards == model.getPlayer().getInactiveCards() && !canOnlyClearAll())) {
                 gc.setFill(Color.DARKGRAY);
             }
             gc.setFont(Font.font("monospaced", FontWeight.BOLD, 14));
@@ -135,6 +141,12 @@ final class View {
             gc.fillText(String.format("%s", card.getSuit().getUnicode()), handPosition + 13, height + 68);
             handPosition += 70;
         }
+    }
+    
+    // Only clear all button can be pressed (return true if so).
+    private boolean canOnlyClearAll() {
+        return !model.canPressHit() && !model.canPressStand() && !model.canPressDouble() && !model.canPressSplit()
+                && !model.canPressSurrender() && !model.canPressStart() && model.canPressClearAll();
     }
     
     // Updates text part of GUI
@@ -198,7 +210,39 @@ final class View {
         gc.fillText(text, x, y);
     }
     
+    // Displays rules used in current game TODO Add more options etc
+    private void updateRules() {
+        position = 30;
+        gc.setFill(Color.DARKGRAY);
+        gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 14));
+        gc.fillText("Q.RULES", 30, 30);
+        if (model.getShowRules()) {
+            gc.setFill(Color.WHITE);
+            gc.fillText("Q.RULES", 30, 30);
+            gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 14));
+            if (model.isHoleCardGame()) {
+                gc.fillText("Blackjack rules used (USA):", 30, rulesPosition());
+                gc.fillText("* This is a hole card game", 30, rulesPosition());
+            } else {
+                gc.fillText("Blackjack rules used (Europe):", 30, rulesPosition());
+                gc.fillText("* This is a no hole card game", 30, rulesPosition());
+            }
+            gc.fillText("* Double after split allowed", 30, rulesPosition());
+            gc.fillText("* Surrender allowed", 30, rulesPosition());
+            gc.fillText("* Dealer hits on soft 17", 30, rulesPosition());
+            gc.fillText("* Split once to make 2 hands", 30, rulesPosition());
+            gc.fillText("* Unlike 10-point cards can be split", 30, rulesPosition());
+            gc.fillText("* A split Ace and 10 counts as 21", 30, rulesPosition());
+            gc.fillText("* Decks: 6", 30, rulesPosition());
+            gc.fillText("* Minimum bet: 10 €", 30, rulesPosition());
+            gc.fillText("* Maximum bet: 1000 €", 30, rulesPosition());
+        }
+    }
     
+    int position = 30;
+    private int rulesPosition() {
+        return position += 15;
+    }
     
     // This might come useful
     public String[] cardSymbols = {

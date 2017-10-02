@@ -3,6 +3,7 @@ package com.gmail.hugoleemet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * The {@code Deck} class contains all cards used in current game (cards in the deck, waiting to be dealt).
@@ -16,6 +17,7 @@ final class Deck {
     private final List<Card> cards = new ArrayList<>();
     private final int numberOfDecks;
     private int shuffledAt = 13;
+    private Random rand = new Random();
     
     /**
      * Takes number of decks used as argument (each deck will add 52 cards to the overall deck).
@@ -28,7 +30,6 @@ final class Deck {
 //        }
         this.numberOfDecks = numberOfDecks;
         shuffleCards(numberOfDecks);
-        Collections.shuffle(cards);
         setShuffledAtPercent(75);
 //        System.out.println(needsShuffle);
     }
@@ -51,11 +52,20 @@ final class Deck {
         for (int i = 0; i < numberOfDecks; i++) {
             for (Suit s : Suit.values()) {
                 for (Rank r : Rank.values()) {
-                    cards.add(new Card(s, r));
-//                    System.out.println(s + " " + r); 
+                    // Commented out for testing purposes.
+//                    cards.add(new Card(s, r));
+//                    System.out.println(s + " " + r);
+                    // For testing purposes. START 1.
+                    if (rand.nextBoolean() == true) {
+                        cards.add(new Card(s, Rank.ACE));
+                    } else {
+                        cards.add(new Card(s, r));
+                    }
+                    // END 1.
                 }
             }
         }
+        Collections.shuffle(cards);
     }
     
     /**

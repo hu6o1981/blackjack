@@ -63,6 +63,10 @@ final class Controller implements EventHandler<KeyEvent>{
             model.lower();
             view.update();
             break;
+        case "q":
+            model.rules();
+            view.update();
+            break;
         }
     }
 

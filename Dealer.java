@@ -38,13 +38,21 @@ final class Dealer {
     /**
      * Deals cards (at the start).
      */
-    void dealCards() {
+    void dealCards(boolean holeCardGame) {
 //        System.out.println("Dealing cards...");
+        System.out.println(deck);
+        
         if (cards.size() < 1) {
-            givePlayerACard();
-            takeHimselfACard();
-            givePlayerACard();
-            takeHimselfACard();
+            if (holeCardGame) {
+                givePlayerACard();
+                takeHimselfACard();
+                givePlayerACard();
+                takeHimselfACard();
+            } else {
+                takeHimselfACard();
+                givePlayerACard();
+                givePlayerACard();
+            }
         } else {
             givePlayerACard();
         }
