@@ -12,14 +12,14 @@ final class Model {
     private static final int MIN_BET = 10;
     private static final int MAX_BET = 1000;
     
-    // TODO Something is bugged (same cards). Seems ok now (Collections.shuffle() was not used).
+    // TODO Something is bugged (same cards). Seems ok now (Collections.shuffle() was not used). SEEMS FIXED
     private final Deck deck = new Deck(6);
     private final Player player = new Player(1000);
     private final Dealer dealer = new Dealer(player, deck);
     
     private boolean showRules = false;
     // In European casinos, no hole card games are prevalent (hole card in US).
-    private boolean holeCardGame = false; // default false
+    private boolean holeCardGame = false; // default false (European)
 
     private int win = 0;
     
@@ -29,7 +29,6 @@ final class Model {
     private boolean canHit = false;
     private boolean canStand = false;
     private boolean canSplit = false;
-//    private boolean canSurrender = false;
     // Split flags (if player is split in different stages of the game)
     private boolean playerSplit = false;
     private boolean playerOnSecondHand = false; // Player plays on second (last playable) hand (while split).

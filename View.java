@@ -221,11 +221,11 @@ final class View {
             gc.fillText("Q.RULES", 30, 30);
             gc.setFont(Font.font("monospaced", FontWeight.NORMAL, 14));
             if (model.isHoleCardGame()) {
-                gc.fillText("Blackjack rules used (USA):", 30, rulesPosition());
-                gc.fillText("* This is a hole card game", 30, rulesPosition());
+                gc.fillText("Blackjack rules used:", 30, rulesPosition());
+                gc.fillText("* This is a hole card game (USA)", 30, rulesPosition());
             } else {
-                gc.fillText("Blackjack rules used (Europe):", 30, rulesPosition());
-                gc.fillText("* This is a no hole card game", 30, rulesPosition());
+                gc.fillText("Blackjack rules used:", 30, rulesPosition());
+                gc.fillText("* This is a no hole card game (Europe)", 30, rulesPosition());
             }
             gc.fillText("* Double after split allowed", 30, rulesPosition());
             gc.fillText("* Surrender allowed", 30, rulesPosition());
