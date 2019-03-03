@@ -39,7 +39,6 @@ final class Dealer {
      * Deals cards (at the start).
      */
     void dealCards(boolean holeCardGame) {
-//        System.out.println("Dealing cards...");
         System.out.println(deck);
         
         if (cards.size() < 1) {
@@ -62,7 +61,6 @@ final class Dealer {
      * Deals a card (one card to a player).
      */
     void dealACard() {
-//        System.out.println("Dealing cards...");
         givePlayerACard();
     }
     

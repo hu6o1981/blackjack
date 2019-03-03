@@ -28,7 +28,6 @@ final class Util {
             }
             aces--;
         }
-//        System.out.println("sum:" + sum + " full aces:" + aces);
         return sum;
     }
     
@@ -74,4 +73,5 @@ final class Util {
     static boolean handIsBust(List<Card> cards) {
         return cardsValue(cards) > 21;
     }
+    
 }

@@ -6,13 +6,10 @@ package com.gmail.hugoleemet;
  * @author Hugo
  */
 final class Model {
-    // TODO Split dealer and both hands busted bugged (showed d:bust h1:bust h2:push/draw, all where 26p) SEEMS FIXED
-    // player blackjack wont win against dealer 21 / this time seemed to work SEEMS FIXED
     
     private static final int MIN_BET = 10;
     private static final int MAX_BET = 1000;
     
-    // TODO Something is bugged (same cards). Seems ok now (Collections.shuffle() was not used). SEEMS FIXED
     private final Deck deck = new Deck(6);
     private final Player player = new Player(1000);
     private final Dealer dealer = new Dealer(player, deck);
@@ -93,7 +90,9 @@ final class Model {
     }
 
     boolean canPressSplit() {
-        return canSplit && playerCanDoubleItsBet();
+        return canSplit && playerHasTwoCards() 
+                && player.getCards().get(0).getRank() == player.getCards().get(1).getRank()
+                && !playerSplit && playerCanDoubleItsBet();
     }
 
     boolean canPressSurrender() {
@@ -131,8 +130,6 @@ final class Model {
      */
     void start() {
         if (canStart) {
-//            System.out.println("Starting...");
-//            System.out.println(dealer.getCards());
             player.resetBalanceSpent();
             player.setStatusText("");
             player.setInactiveStatusText("");
@@ -145,21 +142,12 @@ final class Model {
             canClearAll = true;
             canHit = true;
             canStand = true;
-            // For testing set to true (TODO must be based on game logic)
             canSplit = true;
             
             // Takes money from balance
             player.setBet(player.getDefaultBet() * 2);
             player.setInactiveBet(0);
             player.changeBalance(-player.getDefaultBet());
-            
-            // Checks for blackjack DELETE
-//            if (!playerSplit) {
-//                if (holeCardGame = true 
-//                        && (Util.hasBlackjack(dealer.getCards()) || Util.hasBlackjack(player.getCards()))) {
-//                    checkWhoWon();
-//                }
-//            }
             
             // Starts new game after split
             if (playerOnSecondHand) {
@@ -180,7 +168,6 @@ final class Model {
     
     void clearAll() {
         if (canClearAll) {
-//            System.out.println("Clearing all...");
             player.resetBalanceSpent();
             player.setStatusText("PRESS S TO START GAME");
             player.setInactiveStatusText("");
@@ -198,7 +185,6 @@ final class Model {
     
     void hit() {
         if (canHit) {
-//            System.out.println("Hitting...");
             dealer.dealACard();
             if(!checkIfPlayerBust()) {
                 checkTwentyOne();
@@ -207,8 +193,6 @@ final class Model {
     }
     
     void stand() {
-//        System.out.println("playerOnSecondHand = " + playerOnSecondHand);
-//        System.out.println("playerSplit = " + playerSplit);
         if (canStand) {
             // If player is standing second time when split (standing on last playable hand).
             if (playerOnSecondHand) {
@@ -230,9 +214,7 @@ final class Model {
                 canClearAll = true;
                 canHit = true;
                 canStand = true;
-//                canDouble = false;
                 canSplit = false;
-//                canSurrender = false;
                 player.swapActiveHand();
                 dealer.dealACard();
                 checkTwentyOne();
@@ -248,7 +230,6 @@ final class Model {
     
     void doubleing() {
         if (canPressDouble()) {
-//            System.out.println("Doubleing...");
             player.changeBalance(-player.getDefaultBet());
             player.setBet(player.getBet() * 2);
             boolean playerOnSecondhand = this.playerOnSecondHand;
@@ -261,13 +242,11 @@ final class Model {
     }
     
     void split() {
-        if (canPressSplit() && player.getCards().size() == 2 && !playerSplit) {
-//            System.out.println("Splitting...");
+        if (canPressSplit()) {
             player.split();
             playerSplit = true;
             dealer.dealACard();
             checkTwentyOne();
-            // TODO Can only split with similar cards
         }
     }
     
@@ -285,7 +264,6 @@ final class Model {
      */
     void raise() {
         if (canPressRaise()) {
-//            System.out.println("Raising...");
             player.setDefaultBet(player.getDefaultBet() + MIN_BET);
         }
     }
@@ -295,7 +273,6 @@ final class Model {
      */
     void lower() {
         if (canPressLower()) {
-//            System.out.println("Lowering...");
             player.setDefaultBet(player.getDefaultBet() - MIN_BET);
         }
     }
@@ -340,7 +317,6 @@ final class Model {
     private void checkWhoWon() {
         int playerScore = Util.cardsValue(player.getCards());
         int dealerScore = Util.cardsValue(dealer.getCards());
-//        System.out.println("playerScore = " + playerScore + " dealerScore = " + dealerScore);
         // Checks who win by score (blackjack is checked in other method)
         if (playerScore > dealerScore && playerScore <= 21) {
             playerWon();
@@ -398,9 +374,6 @@ final class Model {
         if (Util.hasBlackjack(dealer.getCards())) {
             dealer.setStatusText("BLACKJACK");
         }
-//        if (!playerSplit && Util.hasBlackjack(dealer.getCards())) {
-//            dealer.setStatusText("BLACKJACK");
-//        }
         if (Util.handIsBust(player.getCards())) {
             player.setStatusText("BUST");
         } else {
@@ -428,8 +401,6 @@ final class Model {
         } else if (playerSplit) {
             player.swapActiveHand();
             dealer.dealACard();
-//            System.out.println("player.getStatusText() = " + player.getStatusText());
-//            System.out.println("player.getInactiveStatusText() = " + player.getInactiveStatusText());
             playerOnSecondHand = true;
         // Game ended when not split
         } else {
@@ -441,7 +412,6 @@ final class Model {
     
     String noMoneyWarning = " / NOT ENOUGH MONEY FOR MINIMUM BET OF " + MIN_BET + " €";
     
-    // TODO Can get bugged when split and run out of money (seems to be fixed now).
     private void resetControlsForNewGame() {
         // To prevent noMoneyWarning to be displayed twice (is erased from inactive hand status text).
         if (playerSplit) {
@@ -457,15 +427,11 @@ final class Model {
             }
         } else {
             player.setStatusText(player.getStatusText() + noMoneyWarning);
-//            String inactiveText = player.getInactiveStatusText();
-//            // To prevent noMoneyWarning to be displayed twice (is erased from inactive hand status text).
-//            player.setInactiveStatusText(inactiveText.replace(noMoneyWarning, ""));
         }
         canClearAll = true;
         canHit = false;
         canStand = false;
         canSplit = false;
-//        canSurrender = false;
     }
 
 }

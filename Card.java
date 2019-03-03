@@ -34,6 +34,4 @@ final class Card {
         return suit.getName() + "-" + rank.getName();
     }
     
-    
-    
 }

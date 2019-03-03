@@ -23,7 +23,6 @@ final class Controller implements EventHandler<KeyEvent>{
 
     @Override
     public void handle(KeyEvent event) {
-//        System.out.println(event.getText());
         
         // Handling different key events:
         switch (event.getText().toLowerCase()) {
@@ -69,11 +68,5 @@ final class Controller implements EventHandler<KeyEvent>{
             break;
         }
     }
-
-//    @Override
-//    public void handle(MouseEvent event) {
-//        System.out.println("mouse clicked");
-//        
-//    }
 
 }

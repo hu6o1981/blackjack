@@ -25,13 +25,9 @@ final class Deck {
      * @param numberOfDecks the number of decks used
      */
     Deck(int numberOfDecks) {
-//        if (numberOfDecks < 1) {
-//            numberOfDecks = 1;
-//        }
         this.numberOfDecks = numberOfDecks;
         shuffleCards(numberOfDecks);
         setShuffledAtPercent(75);
-//        System.out.println(needsShuffle);
     }
     
     /**
@@ -52,20 +48,20 @@ final class Deck {
         for (int i = 0; i < numberOfDecks; i++) {
             for (Suit s : Suit.values()) {
                 for (Rank r : Rank.values()) {
-                    // Commented out for testing purposes.
-//                    cards.add(new Card(s, r));
-//                    System.out.println(s + " " + r);
-                    // For testing purposes. START 1.
-                    if (rand.nextBoolean() == true) {
-                        cards.add(new Card(s, Rank.ACE));
-                    } else {
-                        cards.add(new Card(s, r));
-                    }
-                    // END 1.
+                    // Comment next line out for testing purposes.
+                    cards.add(new Card(s, r));
+//                    // For testing purposes uncomment. START 1.
+//                    if (rand.nextBoolean() == true) {
+//                        cards.add(new Card(s, Rank.ACE));
+//                    } else {
+//                        cards.add(new Card(s, r));
+//                    }
+//                    // END 1.
                 }
             }
         }
         Collections.shuffle(cards);
+        System.out.println(cards);
     }
     
     /**
@@ -76,7 +72,6 @@ final class Deck {
     Card pop() {
         // Creates new deck if ran out of cards (can happen if shuffledAt is low enough)
         if (cards.size() < 1) {
-//            System.out.println("NEW DECK WAS CREATED !!! (because deck ran out of cards)");
             shuffleCards(numberOfDecks);
         }
         Card result = cards.get(cards.size() - 1);
@@ -92,7 +87,6 @@ final class Deck {
      */
     void setShuffledAtPercent(int shuffledAtPercent) {
         shuffledAt = (numberOfDecks + CARDS_IN_DECK) * (100 - shuffledAtPercent) / 100;
-//        System.out.println("shuffledAt = " + shuffledAt);
     }
     
     /**
